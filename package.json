@@ -1,0 +1,25 @@
+{
+  "name": "rtd",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "bun app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/besoeasy/Remote-Torrent-Downloader.git"
+  },
+  "author": "besoeasy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/besoeasy/Remote-Torrent-Downloader/issues"
+  },
+  "homepage": "https://github.com/besoeasy/Remote-Torrent-Downloader#readme",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "nostr-sdk": "^0.0.4",
+    "serve": "^14.2.4",
+    "serve-handler": "^6.1.6",
+    "telegraf": "^4.16.3"
+  }
+}
