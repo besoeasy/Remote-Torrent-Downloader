@@ -1,11 +1,11 @@
 
-<img width="1336" height="1059" alt="StreamBox" src="https://github.com/user-attachments/assets/b978fefa-c2df-4c5f-8292-3c3f1d7e7e00" />
+<img width="1336" height="1059" alt="Remote-Torrent-Downloader" src="https://github.com/user-attachments/assets/b978fefa-c2df-4c5f-8292-3c3f1d7e7e00" />
 
-# StreamBox
+# Remote-Torrent-Downloader
 
 > **Control your downloads from anywhere. Stream from everywhere.**
 
-StreamBox is a minimal, bot-controlled media server. No web UI, no complex setup—just chat with your bot to download, and stream locally via SMB or HTTP.
+Remote-Torrent-Downloader is a minimal, bot-controlled media server. No web UI, no complex setup—just chat with your bot to download, and stream locally via SMB or HTTP.
 
 ## Features
 
@@ -21,7 +21,7 @@ StreamBox is a minimal, bot-controlled media server. No web UI, no complex setup
 
 ```bash
 docker run -d \
-  --name streambox \
+  --name remote-torrent-downloader \
   --restart unless-stopped \
   -p 6798:6798 \
   -p 6799:6799 \
@@ -29,8 +29,8 @@ docker run -d \
   -p 6888:6888/tcp \
   -p 6888:6888/udp \
   -e TELEGRAMBOT="your_bot_token" \
-  -v streambox:/tmp/streambox \
-  ghcr.io/besoeasy/streambox:main
+  -v remote-torrent-downloader:/tmp/remote-torrent-downloader \
+  ghcr.io/besoeasy/remote-torrent-downloader:main
 ```
 
 ### Docker Compose
@@ -38,9 +38,9 @@ docker run -d \
 ```yaml
 version: "3.8"
 services:
-  streambox:
-    image: ghcr.io/besoeasy/streambox:main
-    container_name: streambox
+  remote-torrent-downloader:
+    image: ghcr.io/besoeasy/remote-torrent-downloader:main
+    container_name: remote-torrent-downloader
     restart: unless-stopped
     ports:
       - "6798:6798"
@@ -51,10 +51,10 @@ services:
     environment:
       - TELEGRAMBOT=your_bot_token
     volumes:
-      - streambox:/tmp/streambox
+      - remote-torrent-downloader:/tmp/remote-torrent-downloader
 
 volumes:
-  streambox:
+  remote-torrent-downloader:
 ```
 
 ### Environment Variables
@@ -85,7 +85,7 @@ Start a chat with your bot and send a **magnet link** or **torrent URL**.
 
 Access your downloaded media on your local network.
 
-- **SMB (Samba)**: `smb://YOUR_SERVER_IP:445/streambox`
+- **SMB (Samba)**: `smb://YOUR_SERVER_IP:445/remote-torrent-downloader`
   - _Best for TVs, VLC, Infuse, Kodi._
 - **HTTP**: `http://YOUR_SERVER_IP:6799`
   - _Best for web browsers._

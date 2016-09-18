@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ensure SAVE_DIR exists
-SAVE_DIR=$(bun -e "console.log(require('os').tmpdir() + '/streambox')")
+SAVE_DIR=$(bun -e "console.log(require('os').tmpdir() + '/remote-torrent-downloader')")
 
 mkdir -p "$SAVE_DIR"
 
@@ -38,7 +38,7 @@ cat >/etc/samba/smb.conf <<EOL
    disable netbios = yes
    smb ports = 4445
 
-[StreamBox]
+[Remote-Torrent-Downloader]
    comment = Read-only downloads
    path = $SAVE_DIR
    read only = yes
@@ -46,7 +46,7 @@ cat >/etc/samba/smb.conf <<EOL
    force user = nobody
    browseable = yes
 
-[StreamBox-rw]
+[Remote-Torrent-Downloader-rw]
    comment = Full access downloads
    path = $SAVE_DIR
    read only = no

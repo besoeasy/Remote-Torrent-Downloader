@@ -2,7 +2,7 @@ import axios from "axios";
 import path from "path";
 import os from "os";
 
-const SAVE_DIR = path.join(os.tmpdir(), "streambox");
+const SAVE_DIR = path.join(os.tmpdir(), "remote-torrent-downloader");
 
 /**
  * Public tracker list to help find peers faster

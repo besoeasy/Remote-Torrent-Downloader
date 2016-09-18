@@ -64,7 +64,7 @@ export function generateConfigPage(config) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="refresh" content="20">
-  <title>StreamBox</title>
+  <title>Remote-Torrent-Downloader</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -294,7 +294,7 @@ export function generateConfigPage(config) {
     <!-- Header -->
     <header class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
       <div class="text-center sm:text-left">
-        <h1 class="text-3xl font-bold tracking-tight text-black">StreamBox</h1>
+        <h1 class="text-3xl font-bold tracking-tight text-black">Remote-Torrent-Downloader</h1>
         <p class="text-sm text-zinc-500 font-medium">v${
           version || pkgVersion
         } &bull; Dashboard</p>
@@ -304,7 +304,7 @@ export function generateConfigPage(config) {
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
           <span>Sponsor</span>
         </a>
-        <a href="https://github.com/besoeasy/StreamBox" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-black hover:bg-zinc-800 text-white text-sm font-medium rounded-full transition-all shadow-sm hover:shadow-md">
+        <a href="https://github.com/besoeasy/Remote-Torrent-Downloader" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-black hover:bg-zinc-800 text-white text-sm font-medium rounded-full transition-all shadow-sm hover:shadow-md">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.207 11.387.6.113.793-.262.793-.583 0-.288-.012-1.243-.017-2.252-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.606-2.665-.304-5.466-1.332-5.466-5.931 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.984-.399 3.003-.404 1.018.005 2.046.138 3.004.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.873.119 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.803 5.625-5.475 5.921.43.371.823 1.102.823 2.222 0 1.606-.015 2.899-.015 3.293 0 .323.192.699.8.581C20.565 21.796 24 17.297 24 12c0-6.63-5.37-12-12-12z"/></svg>
           <span>GitHub</span>
         </a>

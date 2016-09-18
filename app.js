@@ -26,10 +26,10 @@ async function cmdStart(userId, options = {}) {
 
     return {
       success: true,
-      name: "Streambox Bot",
+      name: "Remote-Torrent-Downloader Bot",
       version: VERSION,
-      description: "A Telegram/Nostr bot to control Streambox media server. Download torrents and stream media easily.",
-      github: "https://github.com/besoeasy/streambox",
+      description: "A Telegram/Nostr bot to control Remote-Torrent-Downloader. Download torrents and stream media easily.",
+      github: "https://github.com/besoeasy/Remote-Torrent-Downloader",
       userId: userIdHash,
       usedSpace: saveDirSize,
       usedSpaceFormatted: bytesToSize(saveDirSize),
@@ -786,7 +786,7 @@ function startConfigPageServer() {
   });
 }
 
-console.log("\n🚀 Starting StreamBox...\n");
+console.log("\n🚀 Starting Remote-Torrent-Downloader...\n");
 
 startFileServer();
 startConfigPageServer();
