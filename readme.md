@@ -1,6 +1,3 @@
-
-<img width="1336" height="1059" alt="Remote-Torrent-Downloader" src="https://github.com/user-attachments/assets/b978fefa-c2df-4c5f-8292-3c3f1d7e7e00" />
-
 # Remote-Torrent-Downloader
 
 > **Control your downloads from anywhere. Stream from everywhere.**
