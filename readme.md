@@ -27,7 +27,7 @@ docker run -d \
   -p 6888:6888/udp \
   -e TELEGRAMBOT="your_bot_token" \
   -v remote-torrent-downloader:/tmp/remote-torrent-downloader \
-  ghcr.io/besoeasy/remote-torrent-downloader:main
+  ghcr.io/besoeasy/remote-torrent-downloader
 ```
 
 ### Docker Compose
@@ -36,7 +36,7 @@ docker run -d \
 version: "3.8"
 services:
   remote-torrent-downloader:
-    image: ghcr.io/besoeasy/remote-torrent-downloader:main
+    image: ghcr.io/besoeasy/remote-torrent-downloader
     container_name: remote-torrent-downloader
     restart: unless-stopped
     ports:
