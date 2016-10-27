@@ -9,10 +9,9 @@ import { SAVE_DIR, getGlobalStats, downloadAria, getDownloadStatus, getOngoingDo
 
 import { generateConfigPage } from "./modules/ui.js";
 import http from "http";
-import serveHandler from "serve-handler";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { dirname, join, resolve } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -651,19 +650,71 @@ async function formatAndReply(ctx, result, platform, commandType) {
   ctx.reply(message);
 }
 
+async function buildDirectoryListing(dirPath, baseUrlPath) {
+  const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
+  const items = entries
+    .filter((entry) => !entry.name.endsWith(".aria2"))
+    .map((entry) => {
+      const slash = entry.isDirectory() ? "/" : "";
+      const name = `${entry.name}${slash}`;
+      const href = `${baseUrlPath}${encodeURIComponent(entry.name)}${slash}`;
+      return `<li><a href="${href}">${name}</a></li>`;
+    })
+    .join("\n");
+
+  return `<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Index of ${baseUrlPath}</title>
+    <style>
+      body { font-family: sans-serif; padding: 24px; }
+      a { text-decoration: none; }
+      ul { list-style: none; padding: 0; }
+      li { margin: 6px 0; }
+    </style>
+  </head>
+  <body>
+    <h1>Index of ${baseUrlPath}</h1>
+    <ul>
+      ${baseUrlPath !== "/" ? `<li><a href="../">../</a></li>` : ""}
+      ${items}
+    </ul>
+  </body>
+</html>`;
+}
+
 function startFileServer() {
-  const server = http.createServer(async (request, response) => {
-    // Serve files
-    return serveHandler(request, response, {
-      public: SAVE_DIR,
-      directoryListing: true,
-      cleanUrls: false,
-    });
+  const server = Bun.serve({
+    port: SERVER_PORT,
+    async fetch(request) {
+      const url = new URL(request.url);
+      const pathname = decodeURIComponent(url.pathname || "/");
+      const relativePath = pathname.replace(/^\/+/, "");
+      const fullPath = resolve(SAVE_DIR, relativePath);
+
+      if (!fullPath.startsWith(SAVE_DIR)) {
+        return new Response("Forbidden", { status: 403 });
+      }
+
+      try {
+        const stats = await fs.promises.stat(fullPath);
+        if (stats.isDirectory()) {
+          const baseUrlPath = pathname.endsWith("/") ? pathname : `${pathname}/`;
+          const html = await buildDirectoryListing(fullPath, baseUrlPath);
+          return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+        }
+
+        const bunFile = Bun.file(fullPath);
+        return new Response(bunFile);
+      } catch (error) {
+        return new Response("Not Found", { status: 404 });
+      }
+    },
   });
 
-  server.listen(SERVER_PORT, () => {
-    console.log(`📁 File server running on http://localhost:${SERVER_PORT}`);
-  });
+  console.log(`📁 File server running on http://localhost:${SERVER_PORT}`);
+  return server;
 }
 
 function startConfigPageServer() {
