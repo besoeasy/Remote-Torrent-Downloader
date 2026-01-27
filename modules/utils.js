@@ -59,7 +59,9 @@ export async function getFilesRecursively(dir) {
       }
     }
   } catch (error) {
-    console.error(`Error reading directory ${dir}:`, error.message);
+    if (error.code !== "ENOENT") {
+      console.error(`Error reading directory ${dir}:`, error.message);
+    }
   }
   return files;
 }
