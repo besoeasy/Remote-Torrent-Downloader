@@ -706,7 +706,47 @@ function startFileServer() {
         }
 
         const bunFile = Bun.file(fullPath);
-        return new Response(bunFile);
+        const size = bunFile.size;
+        const rangeHeader = request.headers.get("range");
+
+        if (rangeHeader) {
+          const match = rangeHeader.match(/bytes=(\d*)-(\d*)/);
+          if (match) {
+            let start = match[1] ? parseInt(match[1], 10) : 0;
+            let end = match[2] ? parseInt(match[2], 10) : size - 1;
+
+            if (Number.isNaN(start)) start = 0;
+            if (Number.isNaN(end)) end = size - 1;
+
+            if (start >= size || start > end) {
+              return new Response("Range Not Satisfiable", {
+                status: 416,
+                headers: {
+                  "Content-Range": `bytes */${size}`,
+                },
+              });
+            }
+
+            const chunk = bunFile.slice(start, end + 1);
+            return new Response(chunk, {
+              status: 206,
+              headers: {
+                "Content-Range": `bytes ${start}-${end}/${size}`,
+                "Accept-Ranges": "bytes",
+                "Content-Length": String(end - start + 1),
+                "Content-Type": bunFile.type || "application/octet-stream",
+              },
+            });
+          }
+        }
+
+        return new Response(bunFile, {
+          headers: {
+            "Accept-Ranges": "bytes",
+            "Content-Length": String(size),
+            "Content-Type": bunFile.type || "application/octet-stream",
+          },
+        });
       } catch (error) {
         return new Response("Not Found", { status: 404 });
       }
