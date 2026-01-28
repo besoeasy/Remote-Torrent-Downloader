@@ -3,21 +3,6 @@
  * @param {Object} config - Configuration object
  * @returns {string} HTML string
  */
-import { readFileSync } from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-
-// Read package.json once at module load so we can show the app version
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-let pkgVersion = "0.0.1";
-try {
-  const pkgPath = path.join(__dirname, "..", "package.json");
-  const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
-  if (pkg && pkg.version) pkgVersion = pkg.version;
-} catch (e) {
-  // ignore - we'll fall back to default
-}
 export function generateConfigPage(config) {
   const {
     authCode,
@@ -34,7 +19,6 @@ export function generateConfigPage(config) {
     activeDownloads,
     ongoingDownloads,
     ariaStats,
-    version,
     saveDirectorySize,
     oldestFileName,
     oldestFileSize,
@@ -295,9 +279,7 @@ export function generateConfigPage(config) {
     <header class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
       <div class="text-center sm:text-left">
         <h1 class="text-3xl font-bold tracking-tight text-black">Remote-Torrent-Downloader</h1>
-        <p class="text-sm text-zinc-500 font-medium">v${
-          version || pkgVersion
-        } &bull; Dashboard</p>
+        <p class="text-sm text-zinc-500 font-medium">Dashboard</p>
       </div>
       <div class="flex items-center gap-3">
         <a href="https://sponsor.besoeasy.com/" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-sm font-medium rounded-full transition-all shadow-sm hover:shadow-md">
