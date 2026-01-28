@@ -1,11 +1,15 @@
 FROM node:slim
 
-RUN apt-get update && apt-get install -y aria2 samba
+ENV NODE_ENV=production
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends aria2 samba ca-certificates \
+	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm install --omit=dev
+RUN npm ci --omit=dev
 
 COPY . .
 

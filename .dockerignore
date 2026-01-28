@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+yarn-error.log
+bun.lock
+.git
+.github
+.vscode
+.DS_Store
+*.log
