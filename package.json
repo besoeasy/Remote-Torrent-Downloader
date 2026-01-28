@@ -3,7 +3,7 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "bun app.js"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   "homepage": "https://github.com/besoeasy/Remote-Torrent-Downloader#readme",
   "dependencies": {
     "axios": "^1.7.2",
+    "mime-types": "^2.1.35",
     "nostr-sdk": "^0.0.4",
     "telegraf": "^4.16.3"
   }

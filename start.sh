@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ensure SAVE_DIR exists
-SAVE_DIR=$(bun -e "console.log(require('os').tmpdir() + '/remote-torrent-downloader')")
+SAVE_DIR=$(node -e "console.log(require('os').tmpdir() + '/remote-torrent-downloader')")
 
 mkdir -p "$SAVE_DIR"
 
@@ -76,7 +76,7 @@ aria2c --enable-rpc --rpc-listen-all --rpc-listen-port=6398 --listen-port=6888 -
 sleep 4
 
 while true; do
-   bun app.js
+   node app.js
    echo "Bot crashed with exit code $? - restarting in 5 seconds..."
    sleep 7
 done

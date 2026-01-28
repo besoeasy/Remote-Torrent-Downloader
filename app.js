@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 import { Telegraf } from "telegraf";
 import { sendmessage, getmessage, nsecToPublic, generateRandomNsec } from "nostr-sdk";
 
@@ -9,9 +9,10 @@ import { SAVE_DIR, getGlobalStats, downloadAria, getDownloadStatus, getOngoingDo
 
 import { generateConfigPage } from "./modules/ui.js";
 import http from "http";
+import { lookup as mimeLookup } from "mime-types";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
-import { dirname, join, resolve } from "path";
+import { dirname, join, resolve, sep } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -685,75 +686,79 @@ async function buildDirectoryListing(dirPath, baseUrlPath) {
 }
 
 function startFileServer() {
-  const server = Bun.serve({
-    port: SERVER_PORT,
-    async fetch(request) {
-      const url = new URL(request.url);
-      const pathname = decodeURIComponent(url.pathname || "/");
-      const relativePath = pathname.replace(/^\/+/, "");
-      const fullPath = resolve(SAVE_DIR, relativePath);
+  const resolvedSaveDir = resolve(SAVE_DIR);
 
-      if (!fullPath.startsWith(SAVE_DIR)) {
-        return new Response("Forbidden", { status: 403 });
+  const server = http.createServer(async (request, response) => {
+    const url = new URL(request.url || "/", `http://${request.headers.host || "localhost"}`);
+    const pathname = decodeURIComponent(url.pathname || "/");
+    const relativePath = pathname.replace(/^\/+/, "");
+    const fullPath = resolve(resolvedSaveDir, relativePath);
+    const isInside = fullPath === resolvedSaveDir || fullPath.startsWith(`${resolvedSaveDir}${sep}`);
+
+    if (!isInside) {
+      response.writeHead(403, { "Content-Type": "text/plain" });
+      response.end("Forbidden");
+      return;
+    }
+
+    try {
+      const stats = await fs.promises.stat(fullPath);
+      if (stats.isDirectory()) {
+        const baseUrlPath = pathname.endsWith("/") ? pathname : `${pathname}/`;
+        const html = await buildDirectoryListing(fullPath, baseUrlPath);
+        response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+        response.end(html);
+        return;
       }
 
-      try {
-        const stats = await fs.promises.stat(fullPath);
-        if (stats.isDirectory()) {
-          const baseUrlPath = pathname.endsWith("/") ? pathname : `${pathname}/`;
-          const html = await buildDirectoryListing(fullPath, baseUrlPath);
-          return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
-        }
+      const size = stats.size;
+      const rangeHeader = request.headers.range;
+      const contentType = mimeLookup(fullPath) || "application/octet-stream";
 
-        const bunFile = Bun.file(fullPath);
-        const size = bunFile.size;
-        const rangeHeader = request.headers.get("range");
+      if (rangeHeader) {
+        const match = rangeHeader.match(/bytes=(\d*)-(\d*)/);
+        if (match) {
+          let start = match[1] ? parseInt(match[1], 10) : 0;
+          let end = match[2] ? parseInt(match[2], 10) : size - 1;
 
-        if (rangeHeader) {
-          const match = rangeHeader.match(/bytes=(\d*)-(\d*)/);
-          if (match) {
-            let start = match[1] ? parseInt(match[1], 10) : 0;
-            let end = match[2] ? parseInt(match[2], 10) : size - 1;
+          if (Number.isNaN(start)) start = 0;
+          if (Number.isNaN(end)) end = size - 1;
 
-            if (Number.isNaN(start)) start = 0;
-            if (Number.isNaN(end)) end = size - 1;
-
-            if (start >= size || start > end) {
-              return new Response("Range Not Satisfiable", {
-                status: 416,
-                headers: {
-                  "Content-Range": `bytes */${size}`,
-                },
-              });
-            }
-
-            const chunk = bunFile.slice(start, end + 1);
-            return new Response(chunk, {
-              status: 206,
-              headers: {
-                "Content-Range": `bytes ${start}-${end}/${size}`,
-                "Accept-Ranges": "bytes",
-                "Content-Length": String(end - start + 1),
-                "Content-Type": bunFile.type || "application/octet-stream",
-              },
+          if (start >= size || start > end) {
+            response.writeHead(416, {
+              "Content-Range": `bytes */${size}`,
             });
+            response.end("Range Not Satisfiable");
+            return;
           }
-        }
 
-        return new Response(bunFile, {
-          headers: {
+          response.writeHead(206, {
+            "Content-Range": `bytes ${start}-${end}/${size}`,
             "Accept-Ranges": "bytes",
-            "Content-Length": String(size),
-            "Content-Type": bunFile.type || "application/octet-stream",
-          },
-        });
-      } catch (error) {
-        return new Response("Not Found", { status: 404 });
+            "Content-Length": String(end - start + 1),
+            "Content-Type": contentType,
+          });
+          fs.createReadStream(fullPath, { start, end }).pipe(response);
+          return;
+        }
       }
-    },
+
+      response.writeHead(200, {
+        "Accept-Ranges": "bytes",
+        "Content-Length": String(size),
+        "Content-Type": contentType,
+      });
+      fs.createReadStream(fullPath).pipe(response);
+    } catch (error) {
+      response.writeHead(404, { "Content-Type": "text/plain" });
+      response.end("Not Found");
+    }
   });
 
-  console.log(`📁 File server running on http://localhost:${SERVER_PORT}`);
+  server.listen(SERVER_PORT, () => {
+    console.log(`📁 File server running on http://localhost:${SERVER_PORT}`);
+  });
+
   return server;
 }
 

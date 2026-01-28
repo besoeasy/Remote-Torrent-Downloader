@@ -1,11 +1,11 @@
-FROM oven/bun:debian
+FROM node:slim
 
 RUN apt-get update && apt-get install -y aria2 samba
 
 WORKDIR /app
 
-COPY package.json bun.lock* ./
-RUN bun install --production
+COPY package.json package-lock.json* ./
+RUN npm install --omit=dev
 
 COPY . .
 
