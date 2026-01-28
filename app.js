@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import "dotenv/config";
 import { Telegraf } from "telegraf";
 import { sendmessage, getmessage, nsecToPublic, generateRandomNsec } from "nostr-sdk";
 
