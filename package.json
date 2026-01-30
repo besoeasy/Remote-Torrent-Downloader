@@ -1,7 +1,6 @@
 {
   "name": "rtd",
   "main": "app.js",
-  "version": "0.0.01",
   "type": "module",
   "scripts": {
     "start": "node app.js"
@@ -19,6 +18,7 @@
   "dependencies": {
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",
+    "mime-types": "^2.1.35",
     "nostr-sdk": "^0.0.4",
     "telegraf": "^4.16.3"
   }
