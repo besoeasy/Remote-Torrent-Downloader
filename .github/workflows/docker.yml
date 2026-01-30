@@ -51,6 +51,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Read package.json version
+        if: steps.commit-check.outputs.should_build == 'true'
+        id: pkg
+        run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
+
       - name: Extract Docker metadata
         if: steps.commit-check.outputs.should_build == 'true'
         id: meta
@@ -59,6 +64,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest
+            type=raw,value=${{ steps.pkg.outputs.version }}
 
       - name: Build and push Docker image
         if: steps.commit-check.outputs.should_build == 'true'
