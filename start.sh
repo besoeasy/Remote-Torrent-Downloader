@@ -38,7 +38,7 @@ cat >/etc/samba/smb.conf <<EOL
    disable netbios = yes
    smb ports = 4445
 
-[Remote-Torrent-Downloader]
+[RTD]
    comment = Read-only downloads
    path = $SAVE_DIR
    read only = yes
@@ -46,7 +46,7 @@ cat >/etc/samba/smb.conf <<EOL
    force user = nobody
    browseable = yes
 
-[Remote-Torrent-Downloader-rw]
+[RTD-rw]
    comment = Full access downloads
    path = $SAVE_DIR
    read only = no
