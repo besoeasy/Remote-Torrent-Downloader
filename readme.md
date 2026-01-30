@@ -25,7 +25,6 @@ docker run -d \
   --restart unless-stopped \
   -p 6798:6798 \
   -p 6799:6799 \
-  -p 445:4445 \
   -p 6888:6888/tcp \
   -p 6888:6888/udp \
   -e TELEGRAMBOT="your_bot_token" \
@@ -45,7 +44,6 @@ services:
     ports:
       - "6798:6798"
       - "6799:6799"
-      - "445:4445"
       - "6888:6888/tcp"
       - "6888:6888/udp"
     environment:
@@ -85,10 +83,12 @@ Start a chat with your bot and send a **magnet link** or **torrent URL**.
 
 Access your downloaded media on your local network.
 
-- **SMB (Samba)**: `smb://YOUR_SERVER_IP:445/remote-torrent-downloader`
-  - _Best for TVs, VLC, Infuse, Kodi._
-- **HTTP**: `http://YOUR_SERVER_IP:6799`
-  - _Best for web browsers._
+- **WebDAV**: `http://YOUR_SERVER_IP:6799`
+  - **Windows**: Map Network Drive → "Connect to a web site"
+  - **macOS**: Finder → Go → Connect to Server → `http://YOUR_SERVER_IP:6799`
+  - **iOS**: Files app → Connect to Server → `http://YOUR_SERVER_IP:6799`
+  - **Android**: Use a WebDAV-compatible file manager
+  - **VLC/Infuse/Kodi**: Add network location with WebDAV protocol
 
 ## Dashboard
 

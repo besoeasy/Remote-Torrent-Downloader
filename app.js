@@ -10,10 +10,9 @@ import { SAVE_DIR, getGlobalStats, downloadAria, getDownloadStatus, getOngoingDo
 
 import { generateConfigPage } from "./modules/ui.js";
 import http from "http";
-import { lookup as mimeLookup } from "mime-types";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
-import { dirname, join, resolve, sep } from "path";
+import { dirname, join } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,10 +34,8 @@ async function cmdStart(userId, options = {}) {
       usedSpace: saveDirSize,
       usedSpaceFormatted: bytesToSize(saveDirSize),
       saveDir: SAVE_DIR,
-      serverPort: options.serverPort || 6799,
+      webdavPort: options.webdavPort || 6799,
       webPort: options.webPort || 6798,
-      smbPort: options.smbPort || 4445,
-      smbCredentials: options.smbCredentials || null,
     };
   } catch (error) {
     console.error("cmdStart error:", error);
@@ -652,117 +649,6 @@ async function formatAndReply(ctx, result, platform, commandType) {
   ctx.reply(message);
 }
 
-async function buildDirectoryListing(dirPath, baseUrlPath) {
-  const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
-  const items = entries
-    .filter((entry) => !entry.name.endsWith(".aria2"))
-    .map((entry) => {
-      const slash = entry.isDirectory() ? "/" : "";
-      const name = `${entry.name}${slash}`;
-      const href = `${baseUrlPath}${encodeURIComponent(entry.name)}${slash}`;
-      return `<li><a href="${href}">${name}</a></li>`;
-    })
-    .join("\n");
-
-  return `<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Index of ${baseUrlPath}</title>
-    <style>
-      body { font-family: sans-serif; padding: 24px; }
-      a { text-decoration: none; }
-      ul { list-style: none; padding: 0; }
-      li { margin: 6px 0; }
-    </style>
-  </head>
-  <body>
-    <h1>Index of ${baseUrlPath}</h1>
-    <ul>
-      ${baseUrlPath !== "/" ? `<li><a href="../">../</a></li>` : ""}
-      ${items}
-    </ul>
-  </body>
-</html>`;
-}
-
-function startFileServer() {
-  const resolvedSaveDir = resolve(SAVE_DIR);
-
-  const server = http.createServer(async (request, response) => {
-    const url = new URL(request.url || "/", `http://${request.headers.host || "localhost"}`);
-    const pathname = decodeURIComponent(url.pathname || "/");
-    const relativePath = pathname.replace(/^\/+/, "");
-    const fullPath = resolve(resolvedSaveDir, relativePath);
-    const isInside = fullPath === resolvedSaveDir || fullPath.startsWith(`${resolvedSaveDir}${sep}`);
-
-    if (!isInside) {
-      response.writeHead(403, { "Content-Type": "text/plain" });
-      response.end("Forbidden");
-      return;
-    }
-
-    try {
-      const stats = await fs.promises.stat(fullPath);
-      if (stats.isDirectory()) {
-        const baseUrlPath = pathname.endsWith("/") ? pathname : `${pathname}/`;
-        const html = await buildDirectoryListing(fullPath, baseUrlPath);
-        response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-        response.end(html);
-        return;
-      }
-
-      const size = stats.size;
-      const rangeHeader = request.headers.range;
-      const contentType = mimeLookup(fullPath) || "application/octet-stream";
-
-      if (rangeHeader) {
-        const match = rangeHeader.match(/bytes=(\d*)-(\d*)/);
-        if (match) {
-          let start = match[1] ? parseInt(match[1], 10) : 0;
-          let end = match[2] ? parseInt(match[2], 10) : size - 1;
-
-          if (Number.isNaN(start)) start = 0;
-          if (Number.isNaN(end)) end = size - 1;
-
-          if (start >= size || start > end) {
-            response.writeHead(416, {
-              "Content-Range": `bytes */${size}`,
-            });
-            response.end("Range Not Satisfiable");
-            return;
-          }
-
-          response.writeHead(206, {
-            "Content-Range": `bytes ${start}-${end}/${size}`,
-            "Accept-Ranges": "bytes",
-            "Content-Length": String(end - start + 1),
-            "Content-Type": contentType,
-          });
-          fs.createReadStream(fullPath, { start, end }).pipe(response);
-          return;
-        }
-      }
-
-      response.writeHead(200, {
-        "Accept-Ranges": "bytes",
-        "Content-Length": String(size),
-        "Content-Type": contentType,
-      });
-      fs.createReadStream(fullPath).pipe(response);
-    } catch (error) {
-      response.writeHead(404, { "Content-Type": "text/plain" });
-      response.end("Not Found");
-    }
-  });
-
-  server.listen(SERVER_PORT, () => {
-    console.log(`📁 File server running on http://localhost:${SERVER_PORT}`);
-  });
-
-  return server;
-}
-
 function startConfigPageServer() {
   const server = http.createServer(async (request, response) => {
     let ariaStats = null;
@@ -787,16 +673,6 @@ function startConfigPageServer() {
     }
 
     // Read SMB credentials from file
-    let smbCredentials = null;
-    try {
-      const creds = readFileSync("/var/run/smb_credentials.txt", "utf-8").trim();
-      const [smbUser, smbPass] = creds.split(":");
-      smbCredentials = { smbUser, smbPass };
-    } catch (e) {
-      smbCredentials = null;
-    }
-
-    // Fetch ongoing downloads
     let ongoingDownloads = [];
     try {
       const downloadsData = await getOngoingDownloads();
@@ -871,7 +747,6 @@ function startConfigPageServer() {
       oldestFileName: oldestFileName,
       oldestFileSize: oldestFileSize,
       oldestFileMtime: oldestFileMtime,
-      smbCredentials: smbCredentials,
     });
 
     response.writeHead(200, { "Content-Type": "text/html" });
@@ -885,7 +760,6 @@ function startConfigPageServer() {
 
 console.log("\n🚀 Starting Remote-Torrent-Downloader...\n");
 
-startFileServer();
 startConfigPageServer();
 
 if (TELEGRAM_BOT_TOKEN) {
