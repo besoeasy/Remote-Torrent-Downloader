@@ -1,6 +1,7 @@
 {
   "name": "rtd",
   "main": "app.js",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "start": "node app.js"
