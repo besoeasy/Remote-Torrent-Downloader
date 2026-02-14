@@ -1,9 +1,6 @@
 name: Docker
 
 on:
-  push:
-    branches: ["master", "main"]
-
   workflow_dispatch:
 
 env:
@@ -12,7 +9,6 @@ env:
 
 jobs:
   build:
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'latest')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -40,13 +36,7 @@ jobs:
 
       - name: Read package.json version
         id: pkg
-        run: |
-          if [ -f package.json ]; then
-            echo "has_version=true" >> $GITHUB_OUTPUT
-            echo "version=$(node -p 'require("./package.json").version')" >> $GITHUB_OUTPUT
-          else
-            echo "has_version=false" >> $GITHUB_OUTPUT
-          fi
+        run: echo "version=$(node -p \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
 
       - name: Extract Docker metadata
         id: meta
@@ -55,14 +45,14 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest
-            type=raw,value=${{ steps.pkg.outputs.version }},enable=${{ steps.pkg.outputs.has_version == 'true' }}
+            type=raw,value=${{ steps.pkg.outputs.version }}
 
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@v5.0.0
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -70,7 +60,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
 
       - name: Sign the published Docker image
-        if: github.event_name != 'pull_request'
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
