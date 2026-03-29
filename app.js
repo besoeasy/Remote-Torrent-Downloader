@@ -27,10 +27,10 @@ async function cmdStart(userId, options = {}) {
 
     return {
       success: true,
-      name: "Remote-Torrent-Downloader Bot",
+      name: "UniDL Bot",
       version: VERSION,
-      description: "A Telegram/Nostr bot to control Remote-Torrent-Downloader. Download torrents and stream media easily.",
-      github: "https://github.com/besoeasy/Remote-Torrent-Downloader",
+      description: "A Telegram/Nostr bot to control UniDL. Download torrents and stream media easily.",
+      github: "https://github.com/besoeasy/UniDL",
       userId: userIdHash,
       usedSpace: saveDirSize,
       usedSpaceFormatted: bytesToSize(saveDirSize),
@@ -883,7 +883,7 @@ function startConfigPageServer() {
   });
 }
 
-console.log("\n🚀 Starting Remote-Torrent-Downloader...\n");
+console.log("\n🚀 Starting UniDL...\n");
 
 startFileServer();
 startConfigPageServer();

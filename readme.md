@@ -1,11 +1,11 @@
 
 <img width="1613" height="1366" alt="RTD" src="https://github.com/user-attachments/assets/f7d82c50-7ff6-4796-956d-2bcef351e0aa" />
 
-# Remote-Torrent-Downloader
+# UniDL
 
 > **Control your downloads from anywhere. Stream from everywhere.**
 
-Remote-Torrent-Downloader is a minimal, bot-controlled media server. No web UI, no complex setup—just chat with your bot to download, and stream locally via SMB or HTTP.
+UniDL is a minimal, bot-controlled media server. No web UI, no complex setup—just chat with your bot to download, and stream locally via SMB or HTTP.
 
 ## Features
 
@@ -21,7 +21,7 @@ Remote-Torrent-Downloader is a minimal, bot-controlled media server. No web UI, 
 
 ```bash
 docker run -d \
-  --name remote-torrent-downloader \
+  --name UniDL \
   --restart unless-stopped \
   -p 6798:6798 \
   -p 6799:6799 \
@@ -29,8 +29,8 @@ docker run -d \
   -p 6888:6888/tcp \
   -p 6888:6888/udp \
   -e TELEGRAMBOT="your_bot_token" \
-  -v remote-torrent-downloader:/tmp/remote-torrent-downloader \
-  ghcr.io/besoeasy/remote-torrent-downloader
+  -v UniDL:/tmp/UniDL \
+  ghcr.io/besoeasy/UniDL
 ```
 
 ### Docker Compose
@@ -38,9 +38,9 @@ docker run -d \
 ```yaml
 version: "3.8"
 services:
-  remote-torrent-downloader:
-    image: ghcr.io/besoeasy/remote-torrent-downloader
-    container_name: remote-torrent-downloader
+  UniDL:
+    image: ghcr.io/besoeasy/UniDL
+    container_name: UniDL
     restart: unless-stopped
     ports:
       - "6798:6798"
@@ -51,10 +51,10 @@ services:
     environment:
       - TELEGRAMBOT=your_bot_token
     volumes:
-      - remote-torrent-downloader:/tmp/remote-torrent-downloader
+      - UniDL:/tmp/UniDL
 
 volumes:
-  remote-torrent-downloader:
+  UniDL:
 ```
 
 ### Environment Variables
@@ -85,7 +85,7 @@ Start a chat with your bot and send a **magnet link** or **torrent URL**.
 
 Access your downloaded media on your local network.
 
-- **SMB (Samba)**: `smb://YOUR_SERVER_IP:445/remote-torrent-downloader`
+- **SMB (Samba)**: `smb://YOUR_SERVER_IP:445/UniDL`
   - _Best for TVs, VLC, Infuse, Kodi._
 - **HTTP**: `http://YOUR_SERVER_IP:6799`
   - _Best for web browsers._

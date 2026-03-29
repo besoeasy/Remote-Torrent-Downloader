@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ensure SAVE_DIR exists
-SAVE_DIR=$(node -e "console.log(require('os').tmpdir() + '/remote-torrent-downloader')")
+SAVE_DIR=$(node -e "console.log(require('os').tmpdir() + '/UniDL')")
 
 mkdir -p "$SAVE_DIR"
 
@@ -38,7 +38,7 @@ cat >/etc/samba/smb.conf <<EOL
    disable netbios = yes
    smb ports = 4445
 
-[Remote-Torrent-Downloader]
+[UniDL]
    comment = Read-only downloads
    path = $SAVE_DIR
    read only = yes
@@ -46,7 +46,7 @@ cat >/etc/samba/smb.conf <<EOL
    force user = nobody
    browseable = yes
 
-[Remote-Torrent-Downloader-rw]
+[UniDL-rw]
    comment = Full access downloads
    path = $SAVE_DIR
    read only = no

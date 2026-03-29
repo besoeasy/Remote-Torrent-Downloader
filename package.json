@@ -1,5 +1,5 @@
 {
-  "name": "rtd",
+  "name": "unidl",
   "main": "app.js",
   "version": "0.0.1",
   "type": "module",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/besoeasy/Remote-Torrent-Downloader.git"
+    "url": "git+https://github.com/besoeasy/UniDL.git"
   },
   "author": "besoeasy",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/besoeasy/Remote-Torrent-Downloader/issues"
+    "url": "https://github.com/besoeasy/UniDL/issues"
   },
-  "homepage": "https://github.com/besoeasy/Remote-Torrent-Downloader#readme",
+  "homepage": "https://github.com/besoeasy/UniDL#readme",
   "dependencies": {
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",

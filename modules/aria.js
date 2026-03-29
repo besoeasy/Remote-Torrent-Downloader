@@ -2,7 +2,7 @@ import axios from "axios";
 import path from "path";
 import os from "os";
 
-const SAVE_DIR = path.join(os.tmpdir(), "remote-torrent-downloader");
+const SAVE_DIR = path.join(os.tmpdir(), "UniDL");
 
 /**
  * Public tracker list to help find peers faster
