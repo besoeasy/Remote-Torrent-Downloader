@@ -28,7 +28,7 @@ airlock --update   # update to latest version
 - No data leaks to host
 - Fork bomb protection (`--pids-limit 256`)
 - Auto-detects Docker or Podman
-- 10 runtimes: Node, Bun, Deno, Python, Go, Rust, Zig, Debian, Alpine, OpenCode
+- 11 runtimes: Node, Bun, Deno, Python, Go, Rust, Zig, Debian, Ubuntu, Alpine, OpenCode
 
 ## Use cases
 
