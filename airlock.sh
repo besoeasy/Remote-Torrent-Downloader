@@ -143,9 +143,12 @@ launch() {
 menu() {
     local rt
     rt=$(detect_runtime)
-    echo "Airlock $VERSION — $rt detected"
-    echo "https://github.com/besoeasy/airlock"
-    show_version | sed -n '2p'
+    local remote_version
+    remote_version=$(show_version | sed -n '2s/^Remote version: //p')
+    echo "Airlock v$VERSION"
+    printf 'Runtime: %s\n' "$rt"
+    echo "Project: https://github.com/besoeasy/airlock"
+    printf 'Latest:  %s\n' "$remote_version"
     echo
     echo "0) Update"
     echo "1) Alpine"
