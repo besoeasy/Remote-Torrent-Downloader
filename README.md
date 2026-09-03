@@ -21,8 +21,6 @@ mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/besoeasy/a
 
 ```bash
 airlock            # interactive menu with repository and version
-airlock node       # direct launch
-airlock python     # direct launch
 airlock --version  # show local and remote versions
 airlock --update   # update to latest version
 ```
