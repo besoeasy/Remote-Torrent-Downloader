@@ -18,7 +18,7 @@ curl -fsSL https://raw.githubusercontent.com/besoeasy/airlock/main/airlock.sh -o
 ## Usage
 
 ```bash
-airlock            # interactive menu
+airlock            # interactive menu with repository and version
 airlock node       # direct launch
 airlock python     # direct launch
 airlock --version  # show local and remote versions

@@ -17,17 +17,6 @@ show_version() {
     echo "Remote version: $remote_version"
 }
 
-show_help() {
-    echo "Usage: airlock [--version|-v|--update|--help|-h|runtime]"
-    echo
-    echo "Commands:"
-    echo "  --version, -v  Show local and remote versions"
-    echo "  --update       Update airlock"
-    echo "  --help, -h     Show this help"
-    echo
-    echo "Runtimes: alpine, bun, debian, deno, go, node, opencode, python, rust, ubuntu, zig"
-}
-
 update() {
     echo "Updating airlock..."
     local tmp
@@ -155,6 +144,7 @@ menu() {
     local rt
     rt=$(detect_runtime)
     echo "Airlock $VERSION — $rt detected"
+    echo "https://github.com/besoeasy/airlock"
     show_version | sed -n '2p'
     echo
     echo "0) Update"
@@ -189,9 +179,7 @@ menu() {
     esac
 }
 
-if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ] || [ "${1:-}" = "help" ]; then
-    show_help
-elif [ "${1:-}" = "--version" ] || [ "${1:-}" = "-v" ]; then
+if [ "${1:-}" = "--version" ] || [ "${1:-}" = "-v" ]; then
     show_version
 elif [ "${1:-}" = "--update" ]; then
     update
