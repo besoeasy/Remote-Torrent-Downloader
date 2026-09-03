@@ -30,8 +30,11 @@ airlock --version  # show local and remote versions
 - Mounts your current directory at `/workspace`
 - No data leaks to host
 - Fork bomb protection (`--pids-limit 256`)
-- Auto-detects Docker or Podman
+- Auto-detects Docker or Podman (Podman recommended)
 - 11 runtimes: Node, Bun, Deno, Python, Go, Rust, Zig, Debian, Ubuntu, Alpine, OpenCode
+
+> [!TIP]
+> Airlock recommends and works best with **[Podman](https://podman.io/)** — rootless and daemonless containers provide an extra layer of security when running untrusted code. Docker is also supported.
 
 ## Use cases
 
