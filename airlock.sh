@@ -8,9 +8,7 @@ install() {
     mkdir -p "$bin_dir"
     cp "$SELF" "$bin_dir/airlock"
     chmod +x "$bin_dir/airlock"
-    sed -i '/# airlock-start/,/# airlock-end/d' ~/.bashrc 2>/dev/null || true
     echo "Airlock installed to $bin_dir/airlock"
-    echo "Run 'airlock' from any directory — no .bashrc changes needed."
 }
 
 update() {
