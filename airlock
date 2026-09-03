@@ -3,6 +3,7 @@ set -e
 
 SELF="$(readlink -f "$0" 2>/dev/null || echo "$0")"
 VERSION="0.0.1"
+PROJECT_URL="https://github.com/besoeasy/airlock"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/besoeasy/airlock/main/.ver"
 
 get_remote_version() {
@@ -31,23 +32,6 @@ ensure_path() {
     fi
 }
 
-update() {
-    echo "Updating airlock..."
-    local tmp
-    tmp=$(mktemp)
-    local target="$HOME/.local/bin/airlock"
-    mkdir -p "$(dirname "$target")"
-    ensure_path
-    if curl -fsSL https://raw.githubusercontent.com/besoeasy/airlock/main/airlock -o "$tmp"; then
-        chmod +x "$tmp"
-        mv "$tmp" "$target"
-        echo "Airlock updated successfully."
-    else
-        rm -f "$tmp"
-        echo "Error: failed to download update." >&2
-        exit 1
-    fi
-}
 
 detect_runtime() {
     if command -v docker >/dev/null 2>&1; then
@@ -156,18 +140,13 @@ menu() {
     remote_version=$(get_remote_version)
     echo "Airlock v$VERSION"
     printf 'Runtime: %s\n' "$rt"
-    echo "Project: https://github.com/besoeasy/airlock"
+    echo "Project: $PROJECT_URL"
     if [ "$remote_version" != "unavailable" ] && [ -n "$remote_version" ] && [ "$remote_version" != "$VERSION" ]; then
-        printf 'Latest:  %s (update available!)\n' "$remote_version"
+        printf 'Latest:  %s (update available: %s)\n' "$remote_version" "$PROJECT_URL"
     else
         printf 'Latest:  %s\n' "$remote_version"
     fi
     echo
-    if [ "$remote_version" != "unavailable" ] && [ -n "$remote_version" ] && [ "$remote_version" != "$VERSION" ]; then
-        echo "0) Update (v$remote_version available)"
-    else
-        echo "0) Update"
-    fi
     echo "1) Alpine"
     echo "2) Bun"
     echo "3) Debian"
@@ -184,7 +163,6 @@ menu() {
     read -rp "Select runtime (or 'q' to quit): " choice
 
     case "$choice" in
-        0) update ;;
         1) launch alpine ;;
         2) launch bun ;;
         3) launch debian ;;
@@ -205,11 +183,9 @@ ensure_path
 
 if [ "${1:-}" = "--version" ] || [ "${1:-}" = "-v" ]; then
     show_version
-elif [ "${1:-}" = "--update" ]; then
-    update
 elif [ -n "${1:-}" ]; then
     echo "Unknown option: $1" >&2
-    echo "Usage: airlock [--version|-v] [--update]" >&2
+    echo "Usage: airlock [--version|-v]" >&2
     exit 1
 else
     menu
