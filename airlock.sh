@@ -30,72 +30,90 @@ detect_runtime() {
     fi
 }
 
+get_network_args() {
+    local ports
+    read -rp "Ports to open (space-separated, e.g. 3000 8080) or Enter for --network host: " ports
+
+    if [ -z "$ports" ]; then
+        echo "--network host"
+    else
+        local args=""
+        local p
+        for p in $ports; do
+            args="$args -p $p:$p"
+        done
+        echo "$args"
+    fi
+}
+
 launch() {
     local name="$1"
     local rt
     rt=$(detect_runtime)
+    local net_args
+    net_args=$(get_network_args)
 
     case "$name" in
         alpine)
-            $rt run -it --rm --pids-limit 256 --network host \
+            $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
                 alpine:latest sh
             ;;
         bun)
-            $rt run -it --rm --pids-limit 256 --network host \
+            $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 oven/bun:latest bash
             ;;
         debian)
-            $rt run -it --rm --pids-limit 256 --network host \
+            $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
                 debian:stable bash
             ;;
         deno)
-            $rt run -it --rm --pids-limit 256 --network host \
+            $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 --entrypoint /bin/bash \
                 denoland/deno:latest
             ;;
         go)
-            $rt run -it --rm --pids-limit 256 --network host \
+            $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
                 golang:latest bash
             ;;
         node)
-            $rt run -it --rm --pids-limit 256 --network host \
+            $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 node:lts bash
             ;;
         opencode)
-            $rt run -it --rm --pids-limit 256 --network host \
+            $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
                 ghcr.io/anomalyco/opencode
             ;;
         python)
-            $rt run -it --rm --pids-limit 256 --network host \
+            $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
                 python:3 bash
             ;;
         rust)
-            $rt run -it --rm --pids-limit 256 --network host \
+            $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
                 rust:latest bash
             ;;
         ubuntu)
-            $rt run -it --rm --pids-limit 256 --network host \
+            $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
                 ubuntu:latest bash
             ;;
         zig)
-            $rt run -it --rm --pids-limit 256 --network host \
+            $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 --entrypoint /bin/sh \
                 euantorano/zig:latest
