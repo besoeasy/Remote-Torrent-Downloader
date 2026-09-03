@@ -1,4 +1,4 @@
-<img width="941" height="551" alt="image" src="https://github.com/user-attachments/assets/a17b8caa-c63a-4a95-9ed7-52735c2a2476" />
+<img width="941" height="551" alt="Screenshot From 2026-09-03 14-18-22" src="https://github.com/user-attachments/assets/d7685706-1bcb-4064-864f-4d82f57abd2c" />
 
 
 <div align="center">
@@ -23,12 +23,6 @@ airlock node       # direct launch
 airlock python     # direct launch
 airlock --update   # update to latest version
 ```
-
-
-
-https://github.com/user-attachments/assets/d3648565-e047-431d-bc6f-0d38465f2a53
-
-
 
 ## Features
 
