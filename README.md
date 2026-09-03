@@ -12,8 +12,10 @@
 ## Install & Update
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/besoeasy/airlock/main/airlock.sh -o ~/.local/bin/airlock && chmod +x ~/.local/bin/airlock
+mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/besoeasy/airlock/main/airlock -o ~/.local/bin/airlock && chmod +x ~/.local/bin/airlock
 ```
+
+> If `~/.local/bin` is not in your `$PATH`, the script will add it to `~/.bashrc` automatically on first run. Log out and back in, or run `source ~/.bashrc` to apply.
 
 ## Usage
 

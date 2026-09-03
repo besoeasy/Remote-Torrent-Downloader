@@ -33,7 +33,7 @@ update() {
     local target="$HOME/.local/bin/airlock"
     mkdir -p "$(dirname "$target")"
     ensure_path
-    if curl -fsSL https://raw.githubusercontent.com/besoeasy/airlock/main/airlock.sh -o "$tmp"; then
+    if curl -fsSL https://raw.githubusercontent.com/besoeasy/airlock/main/airlock -o "$tmp"; then
         chmod +x "$tmp"
         mv "$tmp" "$target"
         echo "Airlock updated successfully."
