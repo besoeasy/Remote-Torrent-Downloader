@@ -20,7 +20,8 @@ mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/besoeasy/a
 ## Usage
 
 ```bash
-airlock            # interactive menu with repository and version
+airlock            # interactive category menu with repository and version
+airlock [runtime]  # directly launch a specific runtime (e.g. airlock python)
 airlock --version  # show local and remote versions
 ```
 
@@ -31,17 +32,24 @@ airlock --version  # show local and remote versions
 - No data leaks to host
 - Fork bomb protection (`--pids-limit 256`)
 - Auto-detects Docker or Podman (Podman recommended)
-- 11 runtimes: Node, Bun, Deno, Python, Go, Rust, Zig, Debian, Ubuntu, Alpine, OpenCode
+- 20 runtimes organized into 4 categories:
+  - **Programming Languages:** Bun, C/C++ (GCC), Deno, Go, Node.js, PHP, Python, Ruby, Rust, Zig
+  - **Linux Distributions:** Alpine, Arch Linux, Debian, Fedora, Nix, Ubuntu
+  - **AI Coding Agents:** Aider, OpenCode
+  - **Security & Auditing:** Kali Linux, Trivy (Security Scanner)
 
 > [!TIP]
 > Airlock recommends and works best with **[Podman](https://podman.io/)** — rootless and daemonless containers provide an extra layer of security when running untrusted code. Docker is also supported.
 
 ## Use cases
 
-- Run `npm install` from a cloned repo without trusting it
+- Run AI coding agents (Aider, OpenCode) safely in a sandbox without giving LLMs host access
+- Run `npm install`, `bundle install`, or `composer install` from a cloned repo without trusting it
 - Try a language or tool without installing it on your machine
+- Scan cloned repositories for vulnerabilities and secrets with Trivy
+- Inspect suspicious binaries and reverse-engineer safely in Kali Linux
 - Isolate build processes from your host
-- Test on a clean Linux environment
+- Test scripts and packages across different Linux distributions
 - Run untrusted scripts safely
 
 ## License

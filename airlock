@@ -34,10 +34,10 @@ ensure_path() {
 
 
 detect_runtime() {
-    if command -v docker >/dev/null 2>&1; then
-        echo "docker"
-    elif command -v podman >/dev/null 2>&1; then
+    if command -v podman >/dev/null 2>&1; then
         echo "podman"
+    elif command -v docker >/dev/null 2>&1; then
+        echo "docker"
     else
         echo "Error: docker or podman required." >&2
         exit 1
@@ -68,15 +68,31 @@ launch() {
     net_args=$(get_network_args)
 
     case "$name" in
+        aider)
+            $rt run -it --rm --pids-limit 256 $net_args \
+                -v "${PWD}:/workspace" -w /workspace \
+                -e OPENAI_API_KEY -e ANTHROPIC_API_KEY -e GEMINI_API_KEY -e OPENROUTER_API_KEY -e DEEPSEEK_API_KEY \
+                docker.io/paulgauthier/aider
+            ;;
         alpine)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 docker.io/library/alpine:latest sh
             ;;
+        archlinux|arch)
+            $rt run -it --rm --pids-limit 256 $net_args \
+                -v "${PWD}:/workspace" -w /workspace \
+                docker.io/library/archlinux:latest bash
+            ;;
         bun)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 docker.io/oven/bun:latest bash
+            ;;
+        c|cpp|gcc)
+            $rt run -it --rm --pids-limit 256 $net_args \
+                -v "${PWD}:/workspace" -w /workspace \
+                docker.io/library/gcc:latest bash
             ;;
         debian)
             $rt run -it --rm --pids-limit 256 $net_args \
@@ -89,10 +105,25 @@ launch() {
                 --entrypoint /bin/bash \
                 docker.io/denoland/deno:latest
             ;;
+        fedora)
+            $rt run -it --rm --pids-limit 256 $net_args \
+                -v "${PWD}:/workspace" -w /workspace \
+                docker.io/library/fedora:latest bash
+            ;;
         go)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 docker.io/library/golang:latest bash
+            ;;
+        kali|kalilinux)
+            $rt run -it --rm --pids-limit 256 $net_args \
+                -v "${PWD}:/workspace" -w /workspace \
+                docker.io/kalilinux/kali-rolling:latest bash
+            ;;
+        nix)
+            $rt run -it --rm --pids-limit 256 $net_args \
+                -v "${PWD}:/workspace" -w /workspace \
+                docker.io/nixos/nix:latest sh
             ;;
         node)
             $rt run -it --rm --pids-limit 256 $net_args \
@@ -104,15 +135,30 @@ launch() {
                 -v "${PWD}:/workspace" -w /workspace \
                 ghcr.io/anomalyco/opencode
             ;;
+        php)
+            $rt run -it --rm --pids-limit 256 $net_args \
+                -v "${PWD}:/workspace" -w /workspace \
+                docker.io/library/php:cli bash
+            ;;
         python)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 docker.io/library/python:3 bash
             ;;
+        ruby)
+            $rt run -it --rm --pids-limit 256 $net_args \
+                -v "${PWD}:/workspace" -w /workspace \
+                docker.io/library/ruby:latest bash
+            ;;
         rust)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 docker.io/library/rust:latest bash
+            ;;
+        trivy|semgrep)
+            $rt run -it --rm --pids-limit 256 $net_args \
+                -v "${PWD}:/workspace" -w /workspace \
+                docker.io/aquasec/trivy:latest fs /workspace
             ;;
         ubuntu)
             $rt run -it --rm --pids-limit 256 $net_args \
@@ -127,13 +173,13 @@ launch() {
             ;;
         *)
             echo "Unknown runtime: $name" >&2
-            echo "Runtimes: alpine, bun, debian, deno, go, node, opencode, python, rust, ubuntu, zig" >&2
+            echo "Runtimes: aider, alpine, archlinux, bun, c, debian, deno, fedora, gcc, go, kali, nix, node, opencode, php, python, ruby, rust, trivy, ubuntu, zig" >&2
             exit 1
             ;;
     esac
 }
 
-menu() {
+show_header() {
     local rt
     rt=$(detect_runtime)
     local remote_version
@@ -146,37 +192,139 @@ menu() {
     else
         printf 'Latest:  %s\n' "$remote_version"
     fi
-    echo
-    echo "1) Alpine"
-    echo "2) Bun"
-    echo "3) Debian"
-    echo "4) Deno"
-    echo "5) Go"
-    echo "6) Node.js"
-    echo "7) OpenCode"
-    echo "8) Python"
-    echo "9) Rust"
-    echo "10) Ubuntu"
-    echo "11) Zig"
-    echo "q) Quit"
-    echo
-    read -rp "Select runtime (or 'q' to quit): " choice
+}
 
-    case "$choice" in
-        1) launch alpine ;;
-        2) launch bun ;;
-        3) launch debian ;;
-        4) launch deno ;;
-        5) launch go ;;
-        6) launch node ;;
-        7) launch opencode ;;
-        8) launch python ;;
-        9) launch rust ;;
-        10) launch ubuntu ;;
-        11) launch zig ;;
-        q|Q|exit|"") exit 0 ;;
-        *) echo "Invalid option." >&2; exit 1 ;;
-    esac
+menu_languages() {
+    while true; do
+        echo
+        echo "=== Programming Languages ==="
+        echo "1) Bun"
+        echo "2) C / C++ (GCC)"
+        echo "3) Deno"
+        echo "4) Go"
+        echo "5) Node.js"
+        echo "6) PHP"
+        echo "7) Python"
+        echo "8) Ruby"
+        echo "9) Rust"
+        echo "10) Zig"
+        echo "b) Back to categories"
+        echo "q) Quit"
+        echo
+        read -rp "Select language (or 'b' to go back, 'q' to quit): " choice
+
+        case "$choice" in
+            1|bun) launch bun; exit 0 ;;
+            2|c|cpp|gcc) launch gcc; exit 0 ;;
+            3|deno) launch deno; exit 0 ;;
+            4|go|golang) launch go; exit 0 ;;
+            5|node|nodejs) launch node; exit 0 ;;
+            6|php) launch php; exit 0 ;;
+            7|python|py) launch python; exit 0 ;;
+            8|ruby|rb) launch ruby; exit 0 ;;
+            9|rust|rs) launch rust; exit 0 ;;
+            10|zig) launch zig; exit 0 ;;
+            b|B|back|BACK) return 0 ;;
+            q|Q|exit|"") exit 0 ;;
+            *) echo "Invalid option." >&2 ;;
+        esac
+    done
+}
+
+menu_distros() {
+    while true; do
+        echo
+        echo "=== Linux Distributions ==="
+        echo "1) Alpine"
+        echo "2) Arch Linux"
+        echo "3) Debian"
+        echo "4) Fedora"
+        echo "5) Nix"
+        echo "6) Ubuntu"
+        echo "b) Back to categories"
+        echo "q) Quit"
+        echo
+        read -rp "Select distribution (or 'b' to go back, 'q' to quit): " choice
+
+        case "$choice" in
+            1|alpine) launch alpine; exit 0 ;;
+            2|arch|archlinux) launch archlinux; exit 0 ;;
+            3|debian) launch debian; exit 0 ;;
+            4|fedora) launch fedora; exit 0 ;;
+            5|nix) launch nix; exit 0 ;;
+            6|ubuntu) launch ubuntu; exit 0 ;;
+            b|B|back|BACK) return 0 ;;
+            q|Q|exit|"") exit 0 ;;
+            *) echo "Invalid option." >&2 ;;
+        esac
+    done
+}
+
+menu_ai() {
+    while true; do
+        echo
+        echo "=== AI Coding Agents ==="
+        echo "1) Aider"
+        echo "2) OpenCode"
+        echo "b) Back to categories"
+        echo "q) Quit"
+        echo
+        read -rp "Select AI agent (or 'b' to go back, 'q' to quit): " choice
+
+        case "$choice" in
+            1|aider) launch aider; exit 0 ;;
+            2|opencode) launch opencode; exit 0 ;;
+            b|B|back|BACK) return 0 ;;
+            q|Q|exit|"") exit 0 ;;
+            *) echo "Invalid option." >&2 ;;
+        esac
+    done
+}
+
+menu_security() {
+    while true; do
+        echo
+        echo "=== Security & Auditing ==="
+        echo "1) Kali Linux"
+        echo "2) Trivy (Security Scanner)"
+        echo "b) Back to categories"
+        echo "q) Quit"
+        echo
+        read -rp "Select tool (or 'b' to go back, 'q' to quit): " choice
+
+        case "$choice" in
+            1|kali|kalilinux) launch kali; exit 0 ;;
+            2|trivy|semgrep) launch trivy; exit 0 ;;
+            b|B|back|BACK) return 0 ;;
+            q|Q|exit|"") exit 0 ;;
+            *) echo "Invalid option." >&2 ;;
+        esac
+    done
+}
+
+menu() {
+    while true; do
+        show_header
+        echo
+        echo "Select a category:"
+        echo "1) Programming Languages  (Bun, C/C++, Deno, Go, Node, PHP, Python, Ruby, Rust, Zig)"
+        echo "2) Linux Distributions    (Alpine, Arch, Debian, Fedora, Nix, Ubuntu)"
+        echo "3) AI Coding Agents       (Aider, OpenCode)"
+        echo "4) Security & Auditing    (Kali Linux, Trivy)"
+        echo "q) Quit"
+        echo
+        read -rp "Select category (or 'q' to quit): " choice
+
+        case "$choice" in
+            1|lang|languages) menu_languages ;;
+            2|distro|distros|linux) menu_distros ;;
+            3|ai|agent|agents) menu_ai ;;
+            4|sec|security) menu_security ;;
+            q|Q|exit|"") exit 0 ;;
+            *) echo "Invalid option." >&2 ;;
+        esac
+        echo
+    done
 }
 
 ensure_path
@@ -184,9 +332,16 @@ ensure_path
 if [ "${1:-}" = "--version" ] || [ "${1:-}" = "-v" ]; then
     show_version
 elif [ -n "${1:-}" ]; then
-    echo "Unknown option: $1" >&2
-    echo "Usage: airlock [--version|-v]" >&2
-    exit 1
+    case "$1" in
+        aider|alpine|arch|archlinux|bun|c|cpp|gcc|debian|deno|fedora|go|kali|kalilinux|nix|node|opencode|php|python|ruby|rust|semgrep|trivy|ubuntu|zig)
+            launch "$1"
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            echo "Usage: airlock [--version|-v] [runtime]" >&2
+            exit 1
+            ;;
+    esac
 else
     menu
 fi
