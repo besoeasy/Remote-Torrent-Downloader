@@ -5,13 +5,18 @@ SELF="$(readlink -f "$0" 2>/dev/null || echo "$0")"
 VERSION="0.0.1"
 REMOTE_VERSION_URL="https://raw.githubusercontent.com/besoeasy/airlock/main/.ver"
 
+get_remote_version() {
+    local remote_version
+    if remote_version=$(curl -fsSL --connect-timeout 2 --max-time 3 "$REMOTE_VERSION_URL" 2>/dev/null); then
+        printf '%s' "$remote_version" | tr -d '[:space:]'
+    else
+        echo "unavailable"
+    fi
+}
+
 show_version() {
     local remote_version
-    if remote_version=$(curl -fsSL "$REMOTE_VERSION_URL" 2>/dev/null); then
-        remote_version=$(printf '%s' "$remote_version" | tr -d '[:space:]')
-    else
-        remote_version="unavailable"
-    fi
+    remote_version=$(get_remote_version)
 
     echo "Airlock version: $VERSION"
     echo "Remote version: $remote_version"
@@ -148,13 +153,21 @@ menu() {
     local rt
     rt=$(detect_runtime)
     local remote_version
-    remote_version=$(show_version | sed -n '2s/^Remote version: //p')
+    remote_version=$(get_remote_version)
     echo "Airlock v$VERSION"
     printf 'Runtime: %s\n' "$rt"
     echo "Project: https://github.com/besoeasy/airlock"
-    printf 'Latest:  %s\n' "$remote_version"
+    if [ "$remote_version" != "unavailable" ] && [ -n "$remote_version" ] && [ "$remote_version" != "$VERSION" ]; then
+        printf 'Latest:  %s (update available!)\n' "$remote_version"
+    else
+        printf 'Latest:  %s\n' "$remote_version"
+    fi
     echo
-    echo "0) Update"
+    if [ "$remote_version" != "unavailable" ] && [ -n "$remote_version" ] && [ "$remote_version" != "$VERSION" ]; then
+        echo "0) Update (v$remote_version available)"
+    else
+        echo "0) Update"
+    fi
     echo "1) Alpine"
     echo "2) Bun"
     echo "3) Debian"
@@ -166,8 +179,9 @@ menu() {
     echo "9) Rust"
     echo "10) Ubuntu"
     echo "11) Zig"
+    echo "q) Quit"
     echo
-    read -rp "Select runtime: " choice
+    read -rp "Select runtime (or 'q' to quit): " choice
 
     case "$choice" in
         0) update ;;
@@ -182,6 +196,7 @@ menu() {
         9) launch rust ;;
         10) launch ubuntu ;;
         11) launch zig ;;
+        q|Q|exit|"") exit 0 ;;
         *) echo "Invalid option." >&2; exit 1 ;;
     esac
 }
