@@ -72,35 +72,35 @@ launch() {
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
-                alpine:latest sh
+                docker.io/library/alpine:latest sh
             ;;
         bun)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
-                oven/bun:latest bash
+                docker.io/oven/bun:latest bash
             ;;
         debian)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
-                debian:stable bash
+                docker.io/library/debian:stable bash
             ;;
         deno)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 --entrypoint /bin/bash \
-                denoland/deno:latest
+                docker.io/denoland/deno:latest
             ;;
         go)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
-                golang:latest bash
+                docker.io/library/golang:latest bash
             ;;
         node)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
-                node:lts bash
+                docker.io/library/node:lts bash
             ;;
         opencode)
             $rt run -it --rm --pids-limit 256 $net_args \
@@ -112,25 +112,25 @@ launch() {
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
-                python:3 bash
+                docker.io/library/python:3 bash
             ;;
         rust)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
-                rust:latest bash
+                docker.io/library/rust:latest bash
             ;;
         ubuntu)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 -e HOME=/workspace \
-                ubuntu:latest bash
+                docker.io/library/ubuntu:latest bash
             ;;
         zig)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
                 --entrypoint /bin/sh \
-                euantorano/zig:latest
+                docker.io/euantorano/zig:latest
             ;;
         *)
             echo "Unknown runtime: $name" >&2
