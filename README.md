@@ -11,11 +11,21 @@
 
 ## Install & Update
 
+### One-line installer (Recommended)
+
+Handles rootless and system-wide installations automatically, configures `$PATH` across shells (Bash, Zsh, Fish), and updates Airlock when run again:
+
 ```bash
-mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/besoeasy/airlock/main/airlock -o ~/.local/bin/airlock && chmod +x ~/.local/bin/airlock
+curl -fsSL https://raw.githubusercontent.com/besoeasy/airlock/main/install.sh | bash
 ```
 
-> If `~/.local/bin` is not in your `$PATH`, the script will add it to `~/.bashrc` automatically on first run. Log out and back in, or run `source ~/.bashrc` to apply.
+### System-wide with sudo (Alternative)
+
+Installs directly to `/usr/local/bin` for all users and shells:
+
+```bash
+sudo curl -fsSL https://raw.githubusercontent.com/besoeasy/airlock/main/airlock -o /usr/local/bin/airlock && sudo chmod +x /usr/local/bin/airlock
+```
 
 ## Usage
 
