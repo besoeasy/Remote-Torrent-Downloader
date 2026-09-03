@@ -21,6 +21,7 @@ curl -fsSL https://raw.githubusercontent.com/besoeasy/airlock/main/airlock.sh -o
 airlock            # interactive menu
 airlock node       # direct launch
 airlock python     # direct launch
+airlock --version  # show local and remote versions
 airlock --update   # update to latest version
 ```
 

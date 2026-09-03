@@ -2,6 +2,20 @@
 set -e
 
 SELF="$(readlink -f "$0" 2>/dev/null || echo "$0")"
+VERSION="0.0.1"
+REMOTE_VERSION_URL="https://raw.githubusercontent.com/besoeasy/airlock/main/.ver"
+
+show_version() {
+    local remote_version
+    if remote_version=$(curl -fsSL "$REMOTE_VERSION_URL" 2>/dev/null); then
+        remote_version=$(printf '%s' "$remote_version" | tr -d '[:space:]')
+    else
+        remote_version="unavailable"
+    fi
+
+    echo "Airlock version: $VERSION"
+    echo "Remote version: $remote_version"
+}
 
 update() {
     echo "Updating airlock..."
@@ -129,7 +143,8 @@ launch() {
 menu() {
     local rt
     rt=$(detect_runtime)
-    echo "Airlock — $rt detected"
+    echo "Airlock $VERSION — $rt detected"
+    show_version | sed -n '2p'
     echo
     echo "0) Update"
     echo "1) Alpine"
@@ -163,7 +178,9 @@ menu() {
     esac
 }
 
-if [ "${1:-}" = "--update" ]; then
+if [ "${1:-}" = "--version" ] || [ "${1:-}" = "-v" ]; then
+    show_version
+elif [ "${1:-}" = "--update" ]; then
     update
 elif [ -n "${1:-}" ]; then
     launch "$1"
