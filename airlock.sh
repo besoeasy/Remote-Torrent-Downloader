@@ -1,13 +1,25 @@
 #!/usr/bin/env bash
 set -e
 
+SELF="$(readlink -f "$0" 2>/dev/null || echo "$0")"
+
+install() {
+    local bin_dir="$HOME/.local/bin"
+    mkdir -p "$bin_dir"
+    cp "$SELF" "$bin_dir/airlock"
+    chmod +x "$bin_dir/airlock"
+    sed -i '/# airlock-start/,/# airlock-end/d' ~/.bashrc 2>/dev/null || true
+    echo "Airlock installed to $bin_dir/airlock"
+    echo "Run 'airlock' from any directory — no .bashrc changes needed."
+}
+
 update() {
     echo "Updating airlock..."
     local tmp
     tmp=$(mktemp)
     if curl -fsSL https://raw.githubusercontent.com/besoeasy/airlock/main/airlock.sh -o "$tmp"; then
         chmod +x "$tmp"
-        mv "$tmp" ~/.airlock.sh
+        mv "$tmp" "$SELF"
         echo "Airlock updated successfully."
     else
         rm -f "$tmp"
@@ -147,7 +159,9 @@ menu() {
     esac
 }
 
-if [ "${1:-}" = "--update" ]; then
+if [ "${1:-}" = "--install" ]; then
+    install
+elif [ "${1:-}" = "--update" ]; then
     update
 elif [ -n "${1:-}" ]; then
     launch "$1"
