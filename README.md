@@ -24,6 +24,12 @@ airlock python     # direct launch
 airlock --update   # update to latest version
 ```
 
+
+
+https://github.com/user-attachments/assets/d3648565-e047-431d-bc6f-0d38465f2a53
+
+
+
 ## Features
 
 - Disposable containers — exit and everything is gone
