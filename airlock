@@ -131,6 +131,7 @@ launch() {
         opencode)
             $rt run -it --rm --pids-limit 256 $net_args \
                 -v "${PWD}:/workspace" -w /workspace \
+                -e OPENAI_API_KEY -e ANTHROPIC_API_KEY -e GEMINI_API_KEY -e OPENROUTER_API_KEY -e DEEPSEEK_API_KEY \
                 ghcr.io/anomalyco/opencode
             ;;
         php)
